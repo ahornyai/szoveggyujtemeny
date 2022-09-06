@@ -78,7 +78,7 @@ config.book_uris.forEach(async (source) => {
     output.push(lessonOutput);
   });
 
-  fs.writeFileSync("output/" + source + ".json", JSON.stringify(output, null, 2));
+  fs.writeFileSync("src/output/" + source + ".json", JSON.stringify(output, null, 2));
   console.log("[+] Scraped " + source);
 });
 

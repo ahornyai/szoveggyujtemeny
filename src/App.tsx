@@ -1,6 +1,7 @@
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 import { Select } from "react-daisyui";
+import { BookFactory } from "./nkp/book";
 
 function App() {
   const [book, setBook] = useState("");
@@ -10,7 +11,9 @@ function App() {
       return;
     }
     
-    console.log(book);
+    const bookInstance = BookFactory.getBook(book);
+
+    console.log(bookInstance);
   }, [book]);
 
   return (
@@ -23,10 +26,16 @@ function App() {
         <div className="mt-5">
           <Select onChange={setBook} defaultValue={""}>
             <option value={""} disabled key={nanoid()}>Válaszd ki az évfolyamot</option>
-            <option value={"irodalom_9_szoveggyujtemeny_nat2020"} key={nanoid()}>9. osztály</option>
+            <option value={"grade_9"} key={nanoid()}>9. osztály</option>
           </Select>
 
-          
+          {
+            book.trim() !== "" && (
+              <div className="mt-5">
+                amogus
+              </div>
+            )
+          }
         </div>
       </div>
     </div>
