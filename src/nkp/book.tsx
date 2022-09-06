@@ -43,6 +43,11 @@ export class Book {
       }
     }
   }
+
+  public get getSections() {
+    return this.sections;
+  }
+
 }
 
 export class Section {
