@@ -77,22 +77,21 @@ export class Section {
     return this.paragraphs;
   }
 
-  public getRandomParagraph(count: number): string[] {
-    const paragraphs = [];
-    const randomNumbers = [] as number[];
+  public getRandomParagraph(n: number): string[] {
+    let len = this.paragraphs.length;
 
-    for (let i = 0; i < count; i++) {
-      let randomNumber = Math.floor(Math.random() * this.paragraphs.length);
+    if (n > len)
+      n = len;
 
-      while (randomNumbers.includes(randomNumber)) {
-        randomNumber = Math.floor(Math.random() * this.paragraphs.length);
-      }
+    const result = new Array(n);
+    const taken = new Array(len);
 
-      paragraphs.push(this.paragraphs[randomNumber]);
-      randomNumbers.push(randomNumber);
+    while (n--) {
+      var x = Math.floor(Math.random() * len);
+      result[n] = this.paragraphs[x in taken ? taken[x] : x];
+      taken[x] = --len in taken ? taken[len] : len;
     }
-
-    return paragraphs;
+    return result;
   }
 
 }

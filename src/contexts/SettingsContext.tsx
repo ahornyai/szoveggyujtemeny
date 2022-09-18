@@ -89,6 +89,37 @@ export class Settings {
     return sections.includes(index);
   }
 
+  public getRandomSelectedSections(book: Book | undefined, index: number) {
+    if (book === undefined) {
+      return [];
+    }
+
+    let sections = this.selectedSections.get(book.getFileName());
+
+    if (sections === undefined) {
+      return [];
+    }
+
+    return this.getRandom(sections, index).map((index) => book.getSections()[index]);
+  }
+
+  private getRandom(arr: any, n: number) {
+    let len = arr.length;
+
+    if (n > len)
+      n = len;
+
+    const result = new Array(n);
+    const taken = new Array(len);
+
+    while (n--) {
+      var x = Math.floor(Math.random() * len);
+      result[n] = arr[x in taken ? taken[x] : x];
+      taken[x] = --len in taken ? taken[len] : len;
+    }
+    return result;
+  }
+
 }
 
 export const SettingsContext = createContext(new Settings());
