@@ -1,22 +1,31 @@
 import { nanoid } from "nanoid";
+import { useContext } from "react";
 import { useEffect, useState } from "react";
-import { Button, Checkbox, Form, Modal, Select } from "react-daisyui";
-import { BookFactory } from "./nkp/book";
+import { Button, Checkbox, Form, Input, Modal, Select } from "react-daisyui";
+import { SettingsContext } from "./contexts/SettingsContext";
+import { BookFactory, Section } from "./nkp/book";
 
 function App() {
-  const [book, setBook] = useState("");
+  const settings = useContext(SettingsContext);
+  const [book, setBook] = useState(settings.getSelectedBook());
   const [visible, setVisible] = useState(false);
 
   const toggleVisible = () => setVisible(!visible);
+  const changeBook = (fileName: string) => {
+    settings.setSelectedBook(fileName);
+    setBook(BookFactory.getBook(fileName));
+  };
+  const filterSection = (index: number, filter: boolean) => {
+    settings.setSelectedSection(book, index, filter);
+  }
+
 
   useEffect(() => {
-    if (book.trim() == "") {
+    if (book === undefined) {
       return;
     }
     
-    const bookInstance = BookFactory.getBook(book);
-
-    console.log(bookInstance);
+    console.log(book);
   }, [book]);
 
   return (
@@ -25,24 +34,24 @@ function App() {
 
       <div className="bg-slate-800 mt-10 p-5 rounded-xl h-3/4">
         <div className="grid grid-cols-2 gap-3">
-          <h2 className="text-2xl font-bold mt-1">Teszt készítése</h2>
-
-          <Select onChange={setBook} defaultValue={""}>
+          <Select onChange={changeBook} defaultValue={book?.getFileName() || ""}>
             <option value={""} disabled key={nanoid()}>Válaszd ki az évfolyamot</option>
             <option value={"grade_9"} key={nanoid()}>9. osztály</option>
           </Select>
 
           {
-            book.trim() !== "" && (
-              <Button onClick={toggleVisible}>Versek szűrése</Button>
-            )
+            book && (<>
+              <Input type="number" min={1} max={20} placeholder="Idézetek száma" />
+              <Button color="info" onClick={toggleVisible}>Versek szűrése</Button>
+              <Button color="info">Teszt készítése</Button>
+            </>)
           }
 
 
         </div>
 
         {
-          book.trim() !== "" && (
+          book && (
             <div className="mt-5">
               amogus
             </div>
@@ -50,7 +59,7 @@ function App() {
         }
       </div>
 
-      <Modal open={visible} className="bg-slate-800">
+      <Modal open={visible} onClickBackdrop={() => setVisible(false)} className="bg-slate-800">
         <Modal.Header className="font-bold">
           Versek szűrése
         </Modal.Header>
@@ -58,9 +67,9 @@ function App() {
         <Modal.Body>
           <Form className="grid grid-cols-2 gap-2">
             {
-              book && BookFactory.getBook(book).getSections.map((section, index) => (
+              book && book.getSections().map((section, index) => (
                 <Form.Label className="bg-slate-900 rounded-xl gap-2 p-2" title={section.getAuthor() + " - " + section.getTitle()}>
-                  <Checkbox color="accent" key={nanoid()} />
+                  <Checkbox color="accent" defaultChecked={settings.isSelectedSection(book, index)}  key={nanoid()} onClick={(e: any) => filterSection(index, e.target.checked)} />
                 </Form.Label>
               ))
             }
@@ -68,7 +77,7 @@ function App() {
         </Modal.Body>
 
         <Modal.Actions>
-          <Button onClick={toggleVisible}>Yay!</Button>
+          <Button onClick={toggleVisible} color="accent">Szűrés</Button>
         </Modal.Actions>
       </Modal>
     </div>

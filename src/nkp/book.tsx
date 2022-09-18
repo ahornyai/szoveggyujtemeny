@@ -44,7 +44,11 @@ export class Book {
     }
   }
 
-  public get getSections() {
+  public getFileName() {
+    return this.fileName;
+  }
+
+  public getSections() {
     return this.sections;
   }
 
